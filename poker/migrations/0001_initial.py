@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('accounts', '0004_auto_20191212_1947'),
+        ('accounts', '0004_auto_20220117_1947'),
         ('tables', '0001_initial'),
     ]
 
