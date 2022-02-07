@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+    web:
+        build:
+            context: .
+            args:
+                - PORT=$PORT
+        volumes:
+            - .:/code
+        ports:
+            - target: $PORT
+              published: 8000
+
+        depends_on:
+            - db
+            - redis_db
+
+        env_file: .env
+
+    redis_db:
+        image: "redis:5"
+        ports:
+            - "6379:6379"
+    db:
+        image: "postgres:12-alpine"
+        ports:
+            - "5432:5432"
+
+        environment:
+            - POSTGRES_DB=db
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
