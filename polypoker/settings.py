@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 's$ljy8f+gsvqe4$@@o6)tzis%=+r9)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', 'poly-poker.herokuapp.com']
 
 
 # Application definition
@@ -66,7 +66,7 @@ ROOT_URLCONF = 'polypoker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         ,
         'APP_DIRS': True,
         'OPTIONS': {
