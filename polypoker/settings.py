@@ -83,7 +83,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'polypoker.wsgi.application'
 
-ASGI_APPLICATION = 'project.routing.application'
+ASGI_APPLICATION = 'polypoker.routing.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

@@ -14,4 +14,4 @@ COPY . /code/
 ARG PORT
 CMD python manage.py cleartables
 CMD python manage.py collectstatic
-CMD daphne project.asgi:application --port $PORT --bind 0.0.0.0 
+CMD daphne polypoker.asgi:application --port $PORT --bind 0.0.0.0
