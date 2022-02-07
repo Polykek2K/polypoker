@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block pageContent %}
+    {% load static %}
+    {% if user.username == player.username %}
+        <h3>Your profile</h3><br/>
+    {% endif %}
+    <p>user: {{ player.username }}</p>
+    <p>money: {{ player.money }}</p>
+    <img src="{{ player.avatar.url }}" alt="shit" width="500" height="500"/>
+    <p><a href="{% url 'edit' player.username %}">Edit</a></p>
+{% endblock %}
