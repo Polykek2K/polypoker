@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block pageContent %}
+    {% load static %}
+    <body>
+    {% if table.buyIn <= user.money %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="table1">
+                        <br/><br/>
+                        <p id="pot">Pot: 0</p><br/><br/><br/><br/><br/>
+                        <p id="com-cards">Community cards:</p><br/><br/><br/>
+                        <p id="hand">Hand: </p><br/>
+                    </div>
+                    <p id="dealer">Dealer:</p><br/>
+                    <p id="money-in-table">Money:</p><br/>
+                    <div id='buttons'>
+                        <div class="input row">
+                            <div class="col-md-2">
+                                <input id="fold" class="btn btn-danger" type="button" value="Fold"/>
+                            </div>
+                            <div class="col-md-2">
+                                <input id="call" class="btn btn-info" type="button" value="Call"/>
+                            </div>
+                            <div class="col-md-2">
+                                <input id="raise-submit" class="btn btn-success" type="button" value="Raise"/>
+                            </div>
+                        </div>
+                        <input id="raise-amount-input" class="form-control" type="text"/>
+                    </div>
+                     <button class="btn btn-danger" type="button" onclick="history.back()"> EXIT GAME </button>
+                    <br/>
+                </div>
+
+
+                <div class="col-sm-4">
+                    <h3>Chat</h3>
+                    <div class="input-group">
+                        <input id="chat-message-input" type="text" maxlength="100" class="form-control"/>
+                    </div>
+                    <textarea readonly class="form-control" id="chat-log" rows="15"></textarea><br/>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    </body>
+
+
+
+
+    <script>
+        function showButton(button) {
+            var buttonToggle = document.getElementById(button);
+            buttonToggle.style.display = "block";
+        }
+
+        function hideButton(button) {
+            var buttonToggle = document.getElementById(button);
+            buttonToggle.style.display = "none";
+        }
+
+        function submit(input, button) {
+            document.querySelector(input).focus();
+            document.querySelector(input).onkeyup = function (e) {
+                if (e.keyCode === 13) {  // enter
+                    document.querySelector(button).click();
+                }
+            };
+        }
+
+        var pk = {{ table.pk }};
+        hideButton('buttons')
+
+        var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws';
+        var pokerSocket = new ReconnectingWebSocket(
+            ws_scheme + '://' + window.location.host +
+            '/ws/tables/' + pk + '/');
+
+        pokerSocket.onmessage = function (e) {
+            console.log('recieved message')
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            console.log('message:', message)
+            if (message === 'It\'s your turn') {
+                var putIn = data['putIn'];
+                showButton('buttons')
+                if (putIn > 0) {
+                    document.getElementById('call').value = ('Call ' + putIn.toString(10));
+                    showButton('fold')
+
+                } else {
+                    document.getElementById('call').value = ('Check')
+                    {#hideButton('fold')#}
+                }
+                document.querySelector('#chat-log').value = (message + '\n') +
+                    document.querySelector('#chat-log').value;
+
+            } else if (message !== 'message') {
+                hideButton('buttons')
+            }
+            if (message == 'cards') {
+                var hand = data['hand'];
+                var comCards = data['comCards'];
+                var dealer = data['dealer'];
+                var moneyInTable = data['moneyInTable'];
+                var handArr = hand.split(" ");
+                var comCardsArr = comCards.split(" ");
+                document.getElementById('hand').innerHTML = ('Hand: ');
+                for (let i = 0; i < handArr.length - 1; i++) {
+                    let img = document.createElement("img");
+                    img.src = '/static/img/' + handArr[i] + '.png';
+                    img.width = 75;
+                    img.height = 100;
+                    document.getElementById('hand').appendChild(img);
+                }
+                document.getElementById('com-cards').innerHTML = ('Community cards: ');
+                for (let i = 0; i < comCardsArr.length - 1; i++) {
+                    let img = document.createElement("img");
+                    img.src = '/static/img/' + comCardsArr[i] + '.png';
+                    img.width = 75;
+                    img.height = 100;
+                    document.getElementById('com-cards').appendChild(img);
+                }
+                document.getElementById('money-in-table').innerHTML = ('Money: ' + moneyInTable);
+                document.getElementById('dealer').innerHTML = ('Dealer: ' + dealer)
+
+            } else if (message == 'winner') {
+                var showdown = data['showdown'];
+                var log = data['log'];
+                var chatLog = document.querySelector('#chat-log');
+                chatLog.value = (log + '\n' + showdown + '\n') +
+                    chatLog.value;
+                document.getElementById('pot').innerHTML = ('Pot: 0');
+
+            } else if (message == 'message') {
+                var text = data['text'];
+                console.log(text);
+                var chatLog = document.querySelector('#chat-log');
+                chatLog.value += (text + '\n');
+                chatLog.scrollTop = chatLog.scrollHeight;
+
+            } else if (message == 'It\'s your turn') {
+            } else {
+                var pot = data['pot'];
+                var chatLog = document.querySelector('#chat-log');
+                document.getElementById('pot').innerHTML = ('Pot: ' + pot.toString(10)); //not sure need toString
+                chatLog.value = (message + '\n') + chatLog.value;
+            }
+        };
+
+        pokerSocket.onclose = function (e) {
+            pokerSocket.send(JSON.stringify({
+                'action': 'fold',
+            }));
+        };
+        submit('#raise-amount-input', '#raise-submit');
+        submit('#chat-message-input', '#chat-message-input');
+
+        document.querySelector('#raise-submit').onclick = function (e) {
+            var raiseAmountInput = document.querySelector('#raise-amount-input');
+            var raiseAmount = raiseAmountInput.value;
+            pokerSocket.send(JSON.stringify({
+                'action': 'raise',
+                'raiseAmount': raiseAmount,
+            }));
+
+            raiseAmount.value = '';
+        };
+
+        document.querySelector('#chat-message-input').onclick = function (e) {
+            var messageInputDom = document.querySelector('#chat-message-input');
+            var message = messageInputDom.value;
+            pokerSocket.send(JSON.stringify({
+                'action': 'message',
+                'message': message
+            }));
+
+            messageInputDom.value = '';
+        };
+
+        document.querySelector('#fold').onclick = function (e) {
+            pokerSocket.send(JSON.stringify({
+                'action': 'fold',
+            }));
+        };
+
+        document.querySelector('#call').onclick = function (e) {
+            var raiseAmount = document.querySelector('#call');
+            pokerSocket.send(JSON.stringify({
+                'action': 'call',
+            }));
+        };
+    </script>
+
+{% endblock %}
