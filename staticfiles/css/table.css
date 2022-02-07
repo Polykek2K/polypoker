@@ -1,0 +1,9 @@
+.table1 {
+    height: 550px;
+    width: 1100px;
+    background-image: url("pokertable.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    text-align: center;
+    color: white;
+}
