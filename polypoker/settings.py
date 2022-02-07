@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tables',
     'django_extensions',
     'poker',
+    'leaderboard',
+    'accounts',
     'crispy_forms',
     'rest_framework',
 ]
