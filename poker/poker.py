@@ -398,7 +398,26 @@ class Game:
         self.C = Cards(self.players)
         self.P = Poker(self.players, self.C)
 
+    def makeComCards(self):
+        if self.comCount == 0:
+            self.comCards = ''
+            message = ''
 
+        if self.comCount == 1:
+            self.comCards = Cards.convert(self.C.comCards[:3])
+            message = 'Flop: '
+
+        elif self.comCount == 2:
+            self.comCards = Cards.convert(self.C.comCards[:4])
+            message = 'Turn: '
+
+        elif self.comCount == 3:
+            self.comCards = Cards.convert(self.C.comCards[:])
+            message = 'River: '
+
+        self.comCount += 1
+        return message
+        
     def sendComCards(self, message):
         message += self.comCards
         if message != '':
