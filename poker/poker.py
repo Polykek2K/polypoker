@@ -457,11 +457,14 @@ class Game:
 
     def blinds(self):
         sb = self.addRaiseAmount(self.minimumBet)
-        message = self.turn.username + ' posted SB (' + str(sb) + ')\n'
+        message = ''
+        if self.noOfPlayers > 2:
+            message += self.turn.username + ' posted SB (' + str(sb) + ')\n'
         self.nextTurn()
         bb = self.addRaiseAmount(self.minimumBet)
         self.nextTurn()
-        message += self.turn.username + ' posted BB (' + str(bb + sb) + ')\n'
+        if self.noOfPlayers > 2:
+            message += self.turn.username + ' posted BB (' + str(bb + sb) + ')\n'
         self.sendMessage(message, self.tableGroup)
 
     def sendCards(self):
@@ -707,7 +710,6 @@ class Game:
             self.sendCards()
             if self.checkNotAllFolded():
                 if self.checkMultiplePlayersIn():
-                    self.sendComCards(message)
                     while (self.turnIndex != self.better or firstRun):
                         self.updateDBMoney()
                         self.sendCards()
@@ -717,7 +719,6 @@ class Game:
                             self.makeChoice()
                         self.nextTurn()
                 elif a == 3:
-                    self.sendComCards(message)
                     self.sendCards()
         self.winner()
 
