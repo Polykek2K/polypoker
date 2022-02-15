@@ -20,10 +20,3 @@ def profile(request, username):
     }
     close_old_connections()
     return render(request, 'profile.html', context)
-
-
-class Edit(generic.UpdateView):
-    model = CustomUser
-    template_name = 'edit.html'
-    slug_field = 'id'
-    fields = ['avatar']
