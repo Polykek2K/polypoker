@@ -703,6 +703,7 @@ class Game:
             firstRun = True
             if a == 0:
                 self.blinds()
+            message = self.makeComCards()
             self.sendCards()
             if self.checkNotAllFolded():
                 if self.checkMultiplePlayersIn():
