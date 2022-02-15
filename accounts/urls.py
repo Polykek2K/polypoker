@@ -6,5 +6,4 @@ from django.conf import settings
 urlpatterns = [
     path('signup/', views.SignUp.as_view(), name='signup'),
     path('p/<str:username>/', views.profile, name='profile'),
-    path('p/<slug:id>/edit', views.Edit.as_view(), name='edit')
 ]
