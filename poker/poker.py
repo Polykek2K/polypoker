@@ -1,4 +1,6 @@
 import random
+import time
+
 from .models import Players, Room
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -417,7 +419,7 @@ class Game:
 
         self.comCount += 1
         return message
-        
+    
     def sendComCards(self, message):
         message += self.comCards
         if message != '':
@@ -459,7 +461,7 @@ class Game:
         sb = self.addRaiseAmount(self.minimumBet)
         message = ''
         if self.noOfPlayers > 2:
-            message += self.turn.username + ' posted SB (' + str(sb) + ')\n'
+            message = self.turn.username + ' posted SB (' + str(sb) + ')\n'
         self.nextTurn()
         bb = self.addRaiseAmount(self.minimumBet)
         self.nextTurn()
@@ -696,6 +698,7 @@ class Game:
             a += 1
         self.makeWinnerMessage()
         self.sendMessage(self.message, self.tableGroup)
+        time.sleep(3)
 
     def play(self):
         print('in game')
@@ -710,7 +713,7 @@ class Game:
             self.sendCards()
             if self.checkNotAllFolded():
                 if self.checkMultiplePlayersIn():
-                    while (self.turnIndex != self.better or firstRun):
+                    while self.turnIndex != self.better or firstRun:
                         self.updateDBMoney()
                         self.sendCards()
                         firstRun = False

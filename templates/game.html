@@ -8,7 +8,8 @@
                 <div class="col-sm-8">
                     <div class="table1">
                         <br/><br/>
-                        <p id="pot">Pot: 0</p><br/><br/><br/><br/><br/>
+                        <p id="pot">Pot: 0</p><br/>
+                        <p id="winner-cards"></p><br/><br/><br/><br/>
                         <p id="com-cards">Community cards:</p><br/><br/><br/>
                         <p id="hand">Hand: </p><br/>
                     </div>
@@ -28,7 +29,7 @@
                         </div>
                         <input id="raise-amount-input" class="form-control" type="text"/>
                     </div>
-                     <button class="btn btn-danger" type="button" href="/"> EXIT GAME </button>
+                     <button class="btn btn-danger" type="button" onclick="location.href = '/'"> EXIT GAME </button>
                     <br/>
                 </div>
 
@@ -77,10 +78,10 @@
             '/ws/tables/' + pk + '/');
 
         pokerSocket.onmessage = function (e) {
-            console.log('recieved message')
+            console.log('received message')
             var data = JSON.parse(e.data);
             var message = data['message'];
-            console.log('message:', message)
+            {#console.log('message:', message)#}
             if (message === 'It\'s your turn') {
                 var putIn = data['putIn'];
                 showButton('buttons')
@@ -99,6 +100,7 @@
                 hideButton('buttons')
             }
             if (message == 'cards') {
+                document.getElementById('winner-cards').innerHTML = '';
                 var hand = data['hand'];
                 var comCards = data['comCards'];
                 var dealer = data['dealer'];
@@ -134,17 +136,55 @@
 
             } else if (message == 'message') {
                 var text = data['text'];
-                console.log(text);
                 var chatLog = document.querySelector('#chat-log');
                 chatLog.value += (text + '\n');
                 chatLog.scrollTop = chatLog.scrollHeight;
 
             } else if (message == 'It\'s your turn') {
             } else {
-                var pot = data['pot'];
-                var chatLog = document.querySelector('#chat-log');
-                document.getElementById('pot').innerHTML = ('Pot: ' + pot.toString(10)); //not sure need toString
-                chatLog.value = (message + '\n') + chatLog.value;
+                if (message.includes('------------------------------------------')) {
+                    messageSplit = message.split("\n");
+                    console.log(messageSplit);
+                    if (messageSplit[2].split(" ").length > 4) {
+                         let newMessage = "------------------------------------------\n";
+                    for (let i = 2; messageSplit[i] !== "------------------------------------------"; i++) {
+                        tempSplit = messageSplit[i].split(" ");
+                        tempSplit.pop();
+                        console.log(tempSplit)
+                        document.getElementById('winner-cards').append(tempSplit[0])
+                        document.getElementById('winner-cards').append("    ");
+                        for (let j = 0; j < 2; j++) {
+                            let img = document.createElement("img");
+                            img.src = '/static/img/' + tempSplit[tempSplit.length - 1] + '.png';
+                            tempSplit.pop();
+                            console.log(tempSplit);
+                            img.width = 75;
+                            img.height = 100;
+                            document.getElementById('winner-cards').appendChild(img);
+                        }
+                        document.getElementById('winner-cards').append("    ");
+                        console.log(tempSplit.join(' '));
+                        newMessage = newMessage + tempSplit.join(' ') + "\n";
+                    }
+                    newMessage += "------------------------------------------\n"
+                    var pot = data['pot'];
+                    document.getElementById('pot').innerHTML = ('Pot: ' + pot);
+                    var chatLog = document.querySelector('#chat-log');
+                    chatLog.value = (newMessage + '\n') + chatLog.value;
+                    }
+                   else {
+                       var pot = data['pot'];
+                       document.getElementById('pot').innerHTML = ('Pot: ' + pot);
+                       var chatLog = document.querySelector('#chat-log');
+                       chatLog.value = (message + '\n') + chatLog.value;
+                    }
+                } else {
+                    var pot = data['pot'];
+                    var chatLog = document.querySelector('#chat-log');
+                    document.getElementById('pot').innerHTML = ('Pot: ' + pot);
+                    chatLog.value = (message + '\n') + chatLog.value;
+                    console.log(message)
+                }
             }
         };
 
