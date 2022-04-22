@@ -4,11 +4,11 @@ services:
         build:
             context: .
             args:
-                - PORT=$PORT
+                - PORT=8000
         volumes:
             - .:/code
         ports:
-            - target: $PORT
+            - target: 8000
               published: 8000
 
         depends_on:
