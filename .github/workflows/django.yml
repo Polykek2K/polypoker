@@ -29,11 +29,11 @@ jobs:
       continue-on-error: true
       run: |
         docker-compose up --build -d
-        docker-compose exec db psql -U postgres -c "CREATE DATABASE webpoker"
-        docker-compose exec web python manage.py migrate
+        docker-compose exec -T db psql -U postgres -c "CREATE DATABASE webpoker"
+        docker-compose exec -T web python manage.py migrate
     - name: Run Unit Tests
       run: |
-        docker-compose exec web python manage.py test
+        docker-compose exec -T web python manage.py test
     - name: Kill Docker
       run: |
         docker-compose down
