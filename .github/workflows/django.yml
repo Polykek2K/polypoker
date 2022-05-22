@@ -33,7 +33,6 @@ jobs:
         docker-compose exec web python manage.py migrate
     - name: Run Unit Tests
       run: |
-        cd project
         docker-compose exec web python manage.py test
     - name: Kill Docker
       run: |
