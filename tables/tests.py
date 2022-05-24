@@ -1,6 +1,7 @@
 from django.test import TransactionTestCase
 from django.urls import reverse
 from tables.models import Table
+from poker.models import Players
 
 
 class TablesViewTest(TransactionTestCase):

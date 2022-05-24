@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from accounts.models import CustomUser
 from django.urls import reverse
 
@@ -29,3 +29,11 @@ class CustomUserModelTest(TestCase):
         expected_str = user.username
         self.assertEquals(expected_str, str(user))
 
+
+class AccountsViewTest(TransactionTestCase):
+    def setUp(self):
+        CustomUser.objects.create_user(username="Skorol")
+
+    def test_open_leaderboard(self):
+        resp = self.client.get('/accounts/p/Skorol/')
+        self.assertEquals(resp.status_code, 200)
