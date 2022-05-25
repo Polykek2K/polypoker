@@ -33,7 +33,8 @@ jobs:
         docker-compose exec -T web python manage.py migrate
     - name: Run Unit Tests
       run: |
-        docker-compose exec -T web python manage.py test -v 2
+        docker-compose exec -T web coverage run manage.py test -v 2
+        docker-compose exec -T web coverage report
     - name: Kill Docker
       run: |
         docker-compose down
