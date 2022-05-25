@@ -35,6 +35,51 @@ class PlayerTest(TestCase):
     def test_player_hand_strength(self):
         self.assertEquals(self.test_player.handStrength, '')
 
+    def test_call_amount_getter(self):
+        self.assertEquals(self.test_player.callAmount, 0)
+
+    def test_call_amount_setter_valid(self):
+        self.test_player.callAmount = 100
+        self.assertEquals(self.test_player.callAmount, 100)
+
+    def test_call_amount_setter_exception(self):
+        try:
+            self.test_player.callAmount = -1
+        except Exception:
+            self.assertRaises(Exception, 'call amount less than 0')
+
+    def test_putIn(self):
+        self.assertEquals(self.test_player.putIn, 0)
+
+    def test_decreasePutIn(self):
+        self.test_player.decreasePutIn(10)
+        self.assertEquals(self.test_player.putIn, -10)
+
+    def test_fold(self):
+        self.test_player.fold()
+        self.assertEquals(self.test_player.playerIn, False)
+
+    def test_newRound(self):
+        self.test_player.newRound()
+        self.assertEquals(self.test_player.playerIn, True)
+        self.assertEquals(self.test_player.callAmount, 0)
+        self.assertEquals(self.test_player.putIn, 0)
+        self.assertEquals(self.test_player.moneyWon, 0)
+        self.assertEquals(self.test_player.hand, [])
+        self.assertEquals(self.test_player.handStrength, '')
+
+    def test_call(self):
+        self.test_player.call(100)
+        self.assertEquals(self.test_player.money, 900)
+        self.assertEquals(self.test_player.putIn, 100)
+        self.assertEquals(self.test_player.callAmount, 0)
+
+    def test_call_all_in(self):
+        self.test_player.call(1500)
+        self.assertEquals(self.test_player.money, 0)
+        self.assertEquals(self.test_player.putIn, 1000)
+        self.assertEquals(self.test_player.callAmount, 0)
+
 
 class CardsTest(TestCase):
     @classmethod
@@ -58,5 +103,7 @@ class CardsTest(TestCase):
 
 class PokerTest(TestCase):
     pass
+
+
 class GameTest(TestCase):
     pass
