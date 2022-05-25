@@ -1,6 +1,53 @@
-from django.test import TestCase, TransactionTestCase
-from poker.poker import Player, Cards, Poker, Game, Table, Room
+from django.core.exceptions import ValidationError
+from django.test import TestCase, TransactionTestCase, Client
 from accounts.models import CustomUser
+from django.urls import reverse
+
+from poker.models import Players
+from poker.poker import Player, Cards, Poker, Game, Table, Room
+
+
+class CustomUserModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        CustomUser.objects.create_user(username="Skorol")
+
+    def test_username_label(self):
+        user = CustomUser.objects.get(id=1)
+        field_label = user._meta.get_field('username').verbose_name
+        self.assertEquals(field_label, 'username')
+
+    def test_money_count(self):
+        user = CustomUser.objects.get(id=1)
+        money = user._meta.get_field('money').get_default()
+        self.assertEquals(money, 1000)
+
+    def test_avatar(self):
+        user = CustomUser.objects.get(id=1)
+        avatar = user._meta.get_field('avatar').get_default()
+        self.assertEquals(avatar, "default.png")
+
+    def test_str_username(self):
+        user = CustomUser.objects.get(id=1)
+        expected_str = user.username
+        self.assertEquals(expected_str, str(user))
+
+
+class AccountsViewTest(TransactionTestCase):
+    def setUp(self):
+        CustomUser.objects.create_user(username="Skorol")
+
+    def test_open_leaderboard(self):
+        resp = self.client.get('/accounts/p/Skorol/')
+        self.assertEquals(resp.status_code, 200)
+
+
+class LeaderboardViewTest(TransactionTestCase):
+
+    def test_open_leaderboard(self):
+        resp = self.client.get(reverse('leaderboard'))
+        self.assertEquals(resp.status_code, 200)
 
 
 class PlayerTest(TestCase):
@@ -217,3 +264,41 @@ class GameTest(TransactionTestCase):
     def test_table_settings(self):
         self.assertEquals(self.game.comCount, 4)
         self.assertEquals(self.game.pot, 0)
+
+
+class RulesViewTest(TestCase):
+
+    def test_open_rules(self):
+        resp = self.client.get(reverse('pokerRules'))
+        self.assertEqual(resp.status_code, 200)
+
+
+class TablesViewTest(TransactionTestCase):
+    def test_open_tables(self):
+        resp = self.client.get(reverse('index'))
+        self.assertEquals(resp.status_code, 200)
+
+    def test_index(self):
+        client = Client()
+        test_user = CustomUser.objects.create_user(username="skorol", password="skorol", money="900")
+        client.login(username="skorol", password="skorol")
+        resp = client.get(reverse('resetMoney'))
+        self.assertRedirects(resp, '/')
+
+    def test_create_table(self):
+        client = Client()
+        tset_user = CustomUser.objects.create_user(username="skorol", password="skorol")
+        client.login(username="skorol", password="skorol")
+        resp = client.get(reverse('tableCreateView'))
+        self.assertEquals(resp.status_code, 200)
+
+
+class TablesTest(TransactionTestCase):
+    def test_get_no_of_players(self):
+        test_user = CustomUser.objects.create_user(username="skorol", password="skorol")
+        test_table = Table.objects.create(name="Table", buyIn=200, maxNoOfPlayers=3)
+        test_room = Room.objects.create(table=test_table)
+        test_players = Players.objects.create(user=test_user, room=test_room, moneyInTable=100)
+        self.assertEquals(test_table.getNoOfPlayers(), 1)
+        CustomUser.objects.filter().delete()
+        self.assertEquals(test_table.getNoOfPlayers(), 0)
