@@ -19,7 +19,6 @@ def index(request):
 def resetMoney(request):
     close_old_connections()
     if request.user.money < 1000:
-        print('reset')
         request.user.money = 1000
         request.user.save()
         close_old_connections()
