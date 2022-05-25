@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TransactionTestCase, Client
 from django.urls import reverse
 from tables.models import Table
@@ -32,3 +33,5 @@ class TablesTest(TransactionTestCase):
         test_room = Room.objects.create(table=test_table)
         test_players = Players.objects.create(user=test_user, room=test_room, moneyInTable=100)
         self.assertEquals(test_table.getNoOfPlayers(), 1)
+        CustomUser.objects.filter().delete()
+        self.assertEquals(test_table.getNoOfPlayers(), 0)

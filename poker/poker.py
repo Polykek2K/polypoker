@@ -450,7 +450,6 @@ class Game:
         try:
             self.room = Room.objects.get(table=self.table)
         except Room.DoesNotExist:
-            print('everyone left')
             self.table.lastUsed = datetime.now(timezone.utc)
             self.table.save()
             sys.exit()
@@ -512,7 +511,6 @@ class Game:
             if not self.getPlayer(self.turn)[0]:
                 self.choice = 'f'
                 playerLeft = True
-                print(self.turn.username, 'left')
 
         self.room.action = None
         self.room.save()
@@ -651,12 +649,10 @@ class Game:
             # if the money cannot be shared equally
             oddMoney = moneyMade % len(winners)
             if oddMoney != 0:
-                print('odd money in pot:', str(oddMoney))
                 # share the money between the all the winners except the last
                 a = -1
                 while players[a] not in winners:
                     a -= 1
-                print('removing winner:', players[a].username)
                 tempWin = winners[:]
                 tempWin.remove(players[a])
                 pot += self.distributeMoney(players[:], tempWin, oddMoney)
@@ -685,17 +681,14 @@ class Game:
             for player in self.P.playerWin[a]:
                 if player.playerIn:
                     self.winners.append(player)
-            print('winners', self.winners)
             self.pot = self.distributeMoney(self.players[:], self.winners[:],
                                             self.pot)
-            print(self.pot)
             self.updateDBMoney()
             a += 1
         self.makeWinnerMessage()
         self.sendMessage(self.message, self.tableGroup)
 
     def play(self):
-        print('in game')
         self.nextTurn()
         for a in range(4):
             # one to the dealers left
@@ -748,10 +741,8 @@ def makePlayerOrder(playersInGame, players):
                 x for x in playersInGame
                 if x.username == newPlayer.user.username):
             P = Player(newPlayer.user.username, newPlayer.moneyInTable)
-            print(P.username, 'has joined')
             playersInGame.append(P)
 
-    print('playersInGame:', playersInGame)
 
 
 def startGame(table):
@@ -768,7 +759,6 @@ def startGame(table):
 
         # if single player leaves table before anyone joins
         if table.getNoOfPlayers() == 0:
-            print('player left, not in game')
             table.lastUsed = datetime.now(timezone.utc)
             table.save()
             sys.exit()

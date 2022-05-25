@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
 from accounts.models import CustomUser
 from django.urls import reverse
