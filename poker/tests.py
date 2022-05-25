@@ -19,6 +19,9 @@ class PlayerTest(TestCase):
         self.assertEquals(self.test_player.money, 1200)
         self.assertEquals(self.test_player.moneyWon, 200)
 
+    def test_moneyWon_cleaning(self):
+        self.assertEquals(self.test_player.moneyWon, 0)
+
     def test_player_hand(self):
         self.assertEquals(self.test_player.hand, [])
 
@@ -166,6 +169,7 @@ class PokerTest(TestCase):
         res = self.poker.sorting(hand2, hand1)
         self.assertEquals(res, False)
 
+
 class GameTest(TransactionTestCase):
     def setUp(self):
         self.players = [
@@ -202,11 +206,14 @@ class GameTest(TransactionTestCase):
 
     def test_Game_init(self):
         self.assertEquals(self.game.minimumBet, 100)
+
+    def test_table_group_name(self):
         self.assertEquals(self.game.tableGroup, 'table_' + str(self.table.pk))
+
+    def test_game_players(self):
         self.assertEquals(self.game.players, self.players)
         self.assertEquals(self.game.noOfPlayers, len(self.players))
+
+    def test_table_settings(self):
         self.assertEquals(self.game.comCount, 4)
         self.assertEquals(self.game.pot, 0)
-
-    def test_getChoice(self):
-        self.game.getChoice()
