@@ -1,5 +1,6 @@
-from django.test import TestCase
-from poker.poker import Player, Cards, Poker, Game
+from django.test import TestCase, TransactionTestCase
+from poker.poker import Player, Cards, Poker, Game, Table, Room
+from accounts.models import CustomUser
 
 
 class PlayerTest(TestCase):
@@ -100,10 +101,112 @@ class CardsTest(TestCase):
         hand = Cards.convert(self.test_player.hand)
         self.assertEquals(hand, '7_of_clubs 7_of_hearts ')
 
+    def test_comCards_length(self):
+        self.assertEquals(len(self.test_cards.comCards), 5)
+
 
 class PokerTest(TestCase):
-    pass
+    def setUp(self):
+        self.players = [
+            Player("skorol", 1000),
+            Player("nuzhdin", 1000),
+            Player("trakhtenberg", 1000)
+        ]
+        self.cards = Cards(self.players)
+        self.poker = Poker(self.players, self.cards)
 
+    def test_Poker_init(self):
+        self.assertEquals(self.poker.players, self.players)
+        self.assertEquals(self.poker.C, self.cards)
+        self.assertEquals(self.poker.strengthList, ['High Card', 'Pair', 'Two Pair', \
+                                                    'Three of a kind', 'Straight', 'Flush', 'Full House',
+                                                    'Four of a kind', \
+                                                    'Straight Flush', 'Royal Flush'])
 
-class GameTest(TestCase):
-    pass
+    def test_playerWin(self):
+        self.poker.playerWin = self.players[0]
+        self.assertEquals(self.poker.playerWin, self.players[0])
+
+    def test_addAceAsOne(self):
+        original_hand = [
+            [14, 0],
+            [6, 1]
+        ]
+
+        hand = original_hand.copy()
+        original_hand.append([1, 0])
+        self.poker.addAceAsOne(hand)
+        self.assertEquals(hand, original_hand)
+
+    def test_sorting_1(self):
+        hand1 = [
+            [7, 0],
+            [9, 1]
+        ]
+
+        hand2 = [
+            [8, 1],
+            [10, 2]
+        ]
+
+        res = self.poker.sorting(hand1, hand2)
+        self.assertEquals(res, True)
+
+    def test_sorting_2(self):
+        hand1 = [
+            [7, 0],
+            [9, 1]
+        ]
+
+        hand2 = [
+            [8, 1],
+            [10, 2]
+        ]
+
+        res = self.poker.sorting(hand2, hand1)
+        self.assertEquals(res, False)
+
+class GameTest(TransactionTestCase):
+    def setUp(self):
+        self.players = [
+            Player("skorol", 900),
+            Player("nuzhdin", 1000),
+            Player("trakhtenberg", 1100)
+        ]
+
+        self.players[0].hand = [
+            [6, 0],
+            [6, 1]
+        ]
+
+        self.players[1].hand = [
+            [11, 3],
+            [8, 1]
+        ]
+
+        self.players[1].hand = [
+            [10, 3],
+            [4, 2]
+        ]
+
+        self.user0 = CustomUser.objects.create_user(username="skorol", money=1000, avatar=None)
+        self.user1 = CustomUser.objects.create_user(username="nuzhdin", money=1000, avatar=None)
+        self.user2 = CustomUser.objects.create_user(username="trakhtenberg", money=1000, avatar=None)
+
+        minimumBet = 100
+        dealer = 0
+        self.table = Table.objects.create(name="Table1", buyIn=10, maxNoOfPlayers=4)
+        self.room = Room.objects.create(table=self.table)
+        self.tableGroup = 'table_' + str(self.table.pk)
+        self.game = Game(minimumBet, dealer, self.tableGroup, self.table, self.players)
+
+    def test_Game_init(self):
+        self.assertEquals(self.game.minimumBet, 100)
+        self.assertEquals(self.game.tableGroup, 'table_' + str(self.table.pk))
+        self.assertEquals(self.game.players, self.players)
+        self.assertEquals(self.game.noOfPlayers, len(self.players))
+        self.assertEquals(self.game.comCount, 4)
+        self.assertEquals(self.game.pot, 0)
+
+    def test_getChoice(self):
+        self.game.getChoice()
