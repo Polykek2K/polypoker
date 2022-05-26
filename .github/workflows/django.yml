@@ -37,7 +37,7 @@ jobs:
           docker-compose exec -T web coverage report
       - name: Run Integration Tests
         run: |
-          docker-compose exec db psql -U postgres -c "DROP DATABASE test_webpoker"
+          docker-compose exec -T db psql -U postgres -c "DROP DATABASE test_webpoker"
           docker-compose exec -T web python manage.py test tests.tests_integration -v 2 --noinput
       - name: Kill Docker
         run: |

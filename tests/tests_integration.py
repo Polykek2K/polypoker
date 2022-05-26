@@ -1,11 +1,10 @@
-from django.test import TransactionTestCase, TestCase
+from django.test import TransactionTestCase
 from django.test import Client
 from django.urls import reverse, reverse_lazy
 from .test_utils import *
 from accounts.models import CustomUser
 from poker.models import Room, Players
 from tables.models import Table
-from django.db import connections
 
 
 class IntegrationTest(TransactionTestCase):
@@ -16,6 +15,9 @@ class IntegrationTest(TransactionTestCase):
         c = Client()
         resp = c.get('/')
         self.assertEquals(resp.status_code, 200)
+        c2 = Client()
+        resp = c2.get('/asfasdf')
+        self.assertEquals(resp.status_code, 404)
 
     def test_create_user(self):
         c = Client()
@@ -94,5 +96,7 @@ class IntegrationTest(TransactionTestCase):
         self.assertEqual(resp.status_code, 200)
         resp = c.get('/')
         self.assertEqual(resp.status_code, 200)
-        user = CustomUser.objects.filter(username='skorol').get()
-        players = Players.objects.filter(user=user)
+
+    def test_fold(self):
+        pass
+
