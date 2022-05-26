@@ -44,7 +44,7 @@ jobs:
       - name: Run System Tests
         continue-on-error: true
         run: |
-          docker-compose exec web python manage.py test tests.tests_sys -v 2 --noinput
+          docker-compose exec -T web python manage.py test tests.tests_sys -v 2 --noinput
       - name: Kill Docker
         run: |
           docker-compose down
