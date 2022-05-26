@@ -32,10 +32,12 @@ jobs:
           docker-compose exec -T db psql -U postgres -c "CREATE DATABASE webpoker"
           docker-compose exec -T web python manage.py migrate
       - name: Run Unit Tests
+        continue-on-error: true
         run: |
           docker-compose exec -T web coverage run manage.py test tests.tests_unit -v 2 --noinput
           docker-compose exec -T web coverage report
       - name: Run Integration Tests
+        continue-on-error: true
         run: |
           docker-compose exec -T web python manage.py test tests.tests_integration -v 2 --noinput
       - name: Kill Docker
