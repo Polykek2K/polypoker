@@ -23,12 +23,12 @@ class SysTests(LiveServerTestCase):
         chrome_options.add_argument('--disable-gpu')
         self.browser = webdriver.Chrome(options=chrome_options)
 
-    def testIndex(self):
+    def Index(self):
         driver = self.browser
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         self.assertEquals(signup_navlink, 'http://127.0.0.1:8000/accounts/signup/')
 
-    def testSignup(self):
+    def Signup(self):
         driver = self.browser
         driver.get(homepage)
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
@@ -49,7 +49,7 @@ class SysTests(LiveServerTestCase):
         login_page_header = driver.find_element_by_xpath('/html/body/h2').text
         self.assertEquals(login_page_header, 'Login')
 
-    def testSignin(self):
+    def Signin(self):
         driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
@@ -67,7 +67,7 @@ class SysTests(LiveServerTestCase):
         self.assertEquals(user_link_on_homepage,
                           'http://127.0.0.1:8000/accounts/p/systest/')  # http://127.0.0.1:8000/accounts/p/systest/
 
-    def testSignout(self):
+    def Signout(self):
         driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
@@ -91,7 +91,7 @@ class SysTests(LiveServerTestCase):
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         self.assertEquals(signup_navlink, 'http://127.0.0.1:8000/accounts/signup/')
 
-    def testCreate_table(self):
+    def Create_table(self):
         # 1 Log in
         driver = self.browser
         driver.get(homepage)
@@ -130,7 +130,7 @@ class SysTests(LiveServerTestCase):
         homepage_test_table = driver.find_element_by_xpath('//*[@id="Test table 1"]/div/h5').text
         self.assertEquals(homepage_test_table, 'Test table 1')
 
-    def testJoin_table(self):
+    def Join_table(self):
         # 1 Log in
         driver = self.browser
         driver.get(homepage)
@@ -158,7 +158,7 @@ class SysTests(LiveServerTestCase):
         exit_game_button = driver.find_element_by_xpath('/html/body/div/div/div[1]/button')
         exit_game_button.click()
 
-    def testLeave_table(self):
+    def Leave_table(self):
         # 1 Log in
         driver = self.browser
         driver.get(homepage)
@@ -189,7 +189,7 @@ class SysTests(LiveServerTestCase):
         homepage_test_table = driver.find_element_by_xpath('//*[@id="Test table 1"]/div/h5').text
         self.assertEquals(homepage_test_table, 'Test table 1')
 
-    def testChat(self):
+    def Chat(self):
         # 0 Registration of second user
         driver = self.browser
         driver.get(homepage)
@@ -263,7 +263,7 @@ class SysTests(LiveServerTestCase):
         exit_game_button.click()
 
 
-    def testFold(self):
+    def Fold(self):
         # 1 Login
         driver = self.browser
         driver.get(homepage)
@@ -318,7 +318,7 @@ class SysTests(LiveServerTestCase):
         exit_game_button = driver2.find_element_by_xpath('/html/body/div/div/div[1]/button')
         exit_game_button.click()
 
-    def testDealer_change(self):
+    def Dealer_change(self):
         # 1 Login
         driver = self.browser
         driver.get(homepage)
@@ -379,7 +379,7 @@ class SysTests(LiveServerTestCase):
         exit_game_button.click()
 
 
-    def testGame_start(self):
+    def Game_start(self):
         # 1 Login
         driver = self.browser
         driver.get(homepage)
@@ -430,7 +430,7 @@ class SysTests(LiveServerTestCase):
         exit_game_button.click()
 
 
-    def testCheck(self):
+    def Check(self):
         # 1 Login
         driver = self.browser
         driver.get(homepage)
@@ -478,14 +478,14 @@ class SysTests(LiveServerTestCase):
         self.assertEquals(money, 'Money: 294')  # Money: 294
 
     def test_by_order(self):
-        SysTests.testIndex(self)
-        SysTests.testSignup(self)
-        SysTests.testSignin(self)
-        SysTests.testCreate_table(self)
-        SysTests.testJoin_table(self)
-        SysTests.testLeave_table(self)
-        SysTests.testChat(self)
-        SysTests.testGame_start(self)
-        SysTests.testFold(self)
-        SysTests.testDealer_change(self)
-        SysTests.testCheck(self)
+        SysTests.Index(self)
+        SysTests.Signup(self)
+        SysTests.Signin(self)
+        SysTests.Create_table(self)
+        SysTests.Join_table(self)
+        SysTests.Leave_table(self)
+        SysTests.Chat(self)
+        SysTests.Game_start(self)
+        SysTests.Fold(self)
+        SysTests.Dealer_change(self)
+        SysTests.Check(self)
