@@ -68,13 +68,14 @@ class IntegrationTest(TransactionTestCase):
         resp = client_1.get('/poker/2/')
         resp = client_2.get('/poker/2/')
         room = Room.objects.all().count()
+        client_1.logout()
+        client_2.logout()
         self.assertEqual(room, 1)
 
     def test_join_game(self):
         c = Client()
-        test_user_1 = CustomUser.objects.create_user(username='sKorol', password='STrongPassw0rd')
-        c.force_login(test_user_1)
-        resp = c.get('/poker/1/')
+        c.force_login(CustomUser.objects.create_user(username='user', password='password'))
+        resp = c.get('/poker/6/')
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, template_name='game.html')
 
