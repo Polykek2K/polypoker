@@ -2,7 +2,7 @@ from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from django.test import TestCase, TransactionTestCase, Client
+from django.test import TestCase
 
 homepage = 'http://127.0.0.1:8000'
 
@@ -15,13 +15,13 @@ homepage = 'http://127.0.0.1:8000'
 #
 
 class SysTests(TestCase):
-    def test_index(self):
+    def testIndex(self):
         driver = webdriver.Chrome()
         driver.get(homepage)
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         self.assertEquals(signup_navlink, 'http://127.0.0.1:8000/accounts/signup/')
 
-    def test_signup(self):
+    def testSignup(self):
         driver = webdriver.Chrome()
         driver.get(homepage)
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
@@ -42,7 +42,7 @@ class SysTests(TestCase):
         login_page_header = driver.find_element_by_xpath('/html/body/h2').text
         self.assertEquals(login_page_header, 'Login')
 
-    def test_signin(self):
+    def testSignin(self):
         driver = webdriver.Chrome()
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
@@ -60,7 +60,7 @@ class SysTests(TestCase):
         self.assertEquals(user_link_on_homepage,
                           'http://127.0.0.1:8000/accounts/p/systest/')  # http://127.0.0.1:8000/accounts/p/systest/
 
-    def test_signout(self):
+    def testSignout(self):
         driver = webdriver.Chrome()
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
@@ -84,7 +84,7 @@ class SysTests(TestCase):
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         self.assertEquals(signup_navlink, 'http://127.0.0.1:8000/accounts/signup/')
 
-    def test_create_table(self):
+    def testCreate_table(self):
         # 1 Log in
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -123,7 +123,7 @@ class SysTests(TestCase):
         homepage_test_table = driver.find_element_by_xpath('//*[@id="Test table 1"]/div/h5').text
         self.assertEquals(homepage_test_table, 'Test table 1')
 
-    def test_join_table(self):
+    def testJoin_table(self):
         # 1 Log in
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -151,7 +151,7 @@ class SysTests(TestCase):
         exit_game_button = driver.find_element_by_xpath('/html/body/div/div/div[1]/button')
         exit_game_button.click()
 
-    def test_leave_table(self):
+    def testLeave_table(self):
         # 1 Log in
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -182,7 +182,7 @@ class SysTests(TestCase):
         homepage_test_table = driver.find_element_by_xpath('//*[@id="Test table 1"]/div/h5').text
         self.assertEquals(homepage_test_table, 'Test table 1')
 
-    def test_chat(self):
+    def testChat(self):
         # 0 Registration of second user
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -256,7 +256,7 @@ class SysTests(TestCase):
         exit_game_button.click()
 
 
-    def test_fold(self):
+    def testFold(self):
         # 1 Login
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -311,7 +311,7 @@ class SysTests(TestCase):
         exit_game_button = driver2.find_element_by_xpath('/html/body/div/div/div[1]/button')
         exit_game_button.click()
 
-    def test_dealer_change(self):
+    def testDealer_change(self):
         # 1 Login
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -372,7 +372,7 @@ class SysTests(TestCase):
         exit_game_button.click()
 
 
-    def test_game_start(self):
+    def testGame_start(self):
         # 1 Login
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -422,8 +422,7 @@ class SysTests(TestCase):
         exit_game_button = driver2.find_element_by_xpath('/html/body/div/div/div[1]/button')
         exit_game_button.click()
 
-
-    def test_check(self):
+    def testCheck(self):
         # 1 Login
         driver = webdriver.Chrome()
         driver.get(homepage)
@@ -469,4 +468,17 @@ class SysTests(TestCase):
         sleep(1)
         money = driver2.find_element_by_xpath('//*[@id="money-in-table"]').text
         self.assertEquals(money, 'Money: 294')  # Money: 294
+
+    def test_by_order(self):
+        SysTests.testIndex(self)
+        SysTests.testSignup(self)
+        SysTests.testSignin(self)
+        SysTests.testCreate_table(self)
+        SysTests.testJoin_table(self)
+        SysTests.testLeave_table(self)
+        SysTests.testChat(self)
+        SysTests.testGame_start(self)
+        SysTests.testFold(self)
+        SysTests.testDealer_change(self)
+        SysTests.testCheck(self)
 
