@@ -1,8 +1,9 @@
 from time import sleep
 
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
-from django.test import TestCase, TransactionTestCase, Client
+from django.test import LiveServerTestCase, TransactionTestCase, Client
 
 homepage = 'http://127.0.0.1:8000'
 
@@ -14,15 +15,21 @@ homepage = 'http://127.0.0.1:8000'
 #
 #
 
-class SysTests(TestCase):
+class SysTests(LiveServerTestCase):
+    def setUp(self):
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument('--disable-gpu')
+        self.browser = webdriver.Chrome(options=chrome_options)
+
     def test_index(self):
-        driver = webdriver.Chrome()
-        driver.get(homepage)
+        driver = self.browser
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         self.assertEquals(signup_navlink, 'http://127.0.0.1:8000/accounts/signup/')
 
     def test_signup(self):
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         driver.get(signup_navlink)
@@ -43,7 +50,7 @@ class SysTests(TestCase):
         self.assertEquals(login_page_header, 'Login')
 
     def test_signin(self):
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -61,7 +68,7 @@ class SysTests(TestCase):
                           'http://127.0.0.1:8000/accounts/p/systest/')  # http://127.0.0.1:8000/accounts/p/systest/
 
     def test_signout(self):
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -86,7 +93,7 @@ class SysTests(TestCase):
 
     def test_create_table(self):
         # 1 Log in
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -125,7 +132,7 @@ class SysTests(TestCase):
 
     def test_join_table(self):
         # 1 Log in
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -153,7 +160,7 @@ class SysTests(TestCase):
 
     def test_leave_table(self):
         # 1 Log in
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -184,7 +191,7 @@ class SysTests(TestCase):
 
     def test_chat(self):
         # 0 Registration of second user
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signup_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[2]/a').get_attribute('href')
         driver.get(signup_navlink)
@@ -258,7 +265,7 @@ class SysTests(TestCase):
 
     def test_fold(self):
         # 1 Login
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -272,7 +279,7 @@ class SysTests(TestCase):
         login_button.click()
 
         # 1.1 Login
-        driver2 = webdriver.Chrome()
+        driver2 = self.browser
         driver2.get(homepage)
         signin_navlink = driver2.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver2.get(signin_navlink)
@@ -313,7 +320,7 @@ class SysTests(TestCase):
 
     def test_dealer_change(self):
         # 1 Login
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -327,7 +334,7 @@ class SysTests(TestCase):
         login_button.click()
 
         # 1.1 Login
-        driver2 = webdriver.Chrome()
+        driver2 = self.browser
         driver2.get(homepage)
         signin_navlink = driver2.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver2.get(signin_navlink)
@@ -374,7 +381,7 @@ class SysTests(TestCase):
 
     def test_game_start(self):
         # 1 Login
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -388,7 +395,7 @@ class SysTests(TestCase):
         login_button.click()
 
         # 1.1 Login
-        driver2 = webdriver.Chrome()
+        driver2 = self.browser
         driver2.get(homepage)
         signin_navlink = driver2.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver2.get(signin_navlink)
@@ -425,7 +432,7 @@ class SysTests(TestCase):
 
     def test_check(self):
         # 1 Login
-        driver = webdriver.Chrome()
+        driver = self.browser
         driver.get(homepage)
         signin_navlink = driver.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver.get(signin_navlink)
@@ -439,7 +446,7 @@ class SysTests(TestCase):
         login_button.click()
 
         # 1.1 Login
-        driver2 = webdriver.Chrome()
+        driver2 = self.browser
         driver2.get(homepage)
         signin_navlink = driver2.find_element_by_xpath('/html/body/nav/div/ul[2]/li[1]/a').get_attribute('href')
         driver2.get(signin_navlink)

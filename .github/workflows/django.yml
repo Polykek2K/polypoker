@@ -41,6 +41,10 @@ jobs:
         run: |
           docker-compose exec -T web python manage.py test tests.tests_integration -v 2 --noinput
           docker-compose exec -T db psql -U postgres -c "DROP DATABASE test_webpoker"
+      - name: Run System Tests
+        continue-on-error: true
+        run: |
+          docker-compose exec web python manage.py test tests.tests_sys -v 2 --noinput
       - name: Kill Docker
         run: |
           docker-compose down
