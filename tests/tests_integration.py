@@ -74,7 +74,7 @@ class IntegrationTest(TransactionTestCase):
         c = Client()
         test_user_1 = CustomUser.objects.create_user(username='sKorol', password='STrongPassw0rd')
         c.force_login(test_user_1)
-        resp = c.get('/poker/5/')
+        resp = c.get('/poker/1/')
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, template_name='game.html')
 
@@ -100,3 +100,5 @@ class IntegrationTest(TransactionTestCase):
     def test_fold(self):
         pass
 
+    def test_raise(self):
+        pass
