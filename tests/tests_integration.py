@@ -3,7 +3,7 @@ from django.test import Client
 from django.urls import reverse, reverse_lazy
 from .test_utils import *
 from accounts.models import CustomUser
-from poker.models import Room
+from poker.models import Room, Players
 from tables.models import Table
 from django.db import connections
 
@@ -27,6 +27,7 @@ class IntegrationTest(TransactionTestCase):
             'email': 'aa@aa.aa',
         })
         self.assertEqual(resp.status_code, 200)
+        self.assertIsNotNone(CustomUser.objects.filter(username='skorol').get())
 
     def test_login(self):
         c = Client()
@@ -69,12 +70,11 @@ class IntegrationTest(TransactionTestCase):
 
     def test_join_game(self):
         c = Client()
+        test_user_1 = CustomUser.objects.create_user(username='sKorol', password='STrongPassw0rd')
+        c.force_login(test_user_1)
         resp = c.get('/poker/5/')
-        resp = c.post(reverse_lazy('login'), data={
-            'username': 'skorol',
-            'password': 'STrongPassw0rd'
-        })
         self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, template_name='game.html')
 
     def test_logout(self):
         c = Client()
@@ -83,3 +83,16 @@ class IntegrationTest(TransactionTestCase):
         self.assertEquals(resp.status_code, 200)
         c.logout()
         self.assertFalse("_auth_user_id" in c.session)
+
+    def test_leave_game(self):
+        c = Client()
+        resp = c.get('/poker/5/')
+        resp = c.post(reverse_lazy('login'), data={
+            'username': 'skorol',
+            'password': 'STrongPassw0rd'
+        })
+        self.assertEqual(resp.status_code, 200)
+        resp = c.get('/')
+        self.assertEqual(resp.status_code, 200)
+        user = CustomUser.objects.filter(username='skorol').get()
+        players = Players.objects.filter(user=user)
