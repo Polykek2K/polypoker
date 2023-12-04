@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 's$ljy8f+gsvqe4$@@o6)tzis%=+r9)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
-ALLOWED_HOSTS = ['localhost', 'poly-poker.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'polypoker-cf86069de894.herokuapp.com']
 
 
 # Application definition
